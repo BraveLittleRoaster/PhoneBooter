@@ -1,14 +1,20 @@
 import falcon
+import asyncio
 import json
 from libs.phonebooter import PhoneBooter
 
 
 class BooterAPI(object):
 
+    def __init__(self):
+
+        self.loop = asyncio.get_event_loop()
+        self.numThreads = 8
+
     def on_post(self, req: falcon.Request, resp: falcon.Response):
         """Post Handler for starting new boots.
         {'Auth-Token': <authtoken>,
-         'targetNum': 18005832300,
+         'targetNum': '18005832300',
          'attackLength': 600,
          'wavFile': 'ducktales'}
         """
@@ -24,8 +30,8 @@ class BooterAPI(object):
 
             result_json = json.loads(raw_json, encoding='utf8')
 
-        except ValueError:
-
+        except ValueError as e:
+            print(e)
             raise falcon.HTTPError(falcon.HTTP_400,
                                    'Malformed JSON',
                                    'Could not decode the request body. The '
@@ -39,7 +45,7 @@ class BooterAPI(object):
                 raise falcon.HTTPError(falcon.HTTP_403, "Unauthorized.")
 
         except KeyError as e:
-
+            print(e)
             raise falcon.HTTPError(falcon.HTTP_403, "Unauthorized.")
 
         targetNum = result_json['targetNum']
@@ -53,13 +59,15 @@ class BooterAPI(object):
 
             optional = False
 
+        booter = PhoneBooter()
+
         if optional:
 
-            booter = PhoneBooter(targetNum=targetNum, numThreads=8, bootLength=attackLength, wav=wavFile)
+            booter.start(targetNum=targetNum, numThreads=self.numThreads, bootLength=attackLength, wav=wavFile)
 
         else:
 
-            booter = PhoneBooter(targetNum=targetNum, numThreads=8, bootLength=attackLength, wav='hello-world')
+            booter.start(targetNum=targetNum, numThreads=self.numThreads, bootLength=attackLength, wav='hello-world')
 
         resp.status = falcon.HTTP_200
         json_resonse = {'Status': 'Attack Launched.'}
