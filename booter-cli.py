@@ -4,7 +4,8 @@ from libs.phonebooter import PhoneBooter
 
 def main(targetNum, threads, bootLength, wav):
 
-    booter = PhoneBooter(targetNum, threads, bootLength, wav)
+    booter = PhoneBooter()
+    booter.launch(targetNum, threads, bootLength, wav)
 
 
 if __name__ == '__main__':
@@ -34,4 +35,8 @@ if __name__ == '__main__':
                         help='Number of async processes to kick off. Default is 8.', default=8)
     args = parser.parse_args()
 
-    main(args.targetNum, int(args.threads), int(args.bootLength), args.wav)
+    if args.wav is not None:
+        main(args.targetNum, int(args.threads), int(args.bootLength), args.wav)
+
+    else:
+        main(args.targetNum, int(args.threads), int(args.bootLength), 'hello-world')
