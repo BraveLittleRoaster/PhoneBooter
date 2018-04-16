@@ -6,10 +6,6 @@ from libs.generaterandoms import GenerateRandoms
 
 class PhoneBooter(object):
 
-    def __init__(self):
-
-        self.loop = asyncio.get_event_loop()
-
     @asyncio.coroutine
     def originate(self, targetNum, wav):
 
@@ -58,9 +54,11 @@ class PhoneBooter(object):
 
     def launch(self, targetNum, numThreads, bootLength, wav):
         """Run an attack for the specified number of seconds against the target."""
-
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         for x in list(range(numThreads)):
-            self.loop.create_task(self.originate(targetNum, wav))
+            loop.create_task(self.originate(targetNum, wav))
 
-        self.loop.create_task(self.stop_after(self.loop, bootLength))
-        self.loop.run_forever()
+        loop.create_task(self.stop_after(loop, bootLength))
+        loop.run_forever()
+        loop.close()

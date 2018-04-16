@@ -5,7 +5,7 @@ from libs.phonebooter import PhoneBooter
 def main(targetNum, threads, bootLength, wav):
 
     booter = PhoneBooter()
-    booter.launch(targetNum, threads, bootLength, wav)
+    booter.launch  (targetNum, threads, bootLength, wav)
 
 
 if __name__ == '__main__':
