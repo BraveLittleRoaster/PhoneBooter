@@ -9,7 +9,7 @@ class BooterAPI(object):
     def __init__(self):
 
         self.loop = asyncio.get_event_loop()
-        self.numThreads = 8
+        #self.numThreads = 8
 
     def on_post(self, req: falcon.Request, resp: falcon.Response):
         """Post Handler for starting new boots.
@@ -50,6 +50,7 @@ class BooterAPI(object):
 
         targetNum = result_json['targetNum']
         attackLength = result_json['attackLength']
+        numThreads = result_json['numCalls']
 
         try:
             optional = True
@@ -63,11 +64,11 @@ class BooterAPI(object):
 
         if optional:
 
-            booter.start(targetNum=targetNum, numThreads=self.numThreads, bootLength=attackLength, wav=wavFile)
+            booter.start(targetNum=targetNum, numThreads=numThreads, bootLength=attackLength, wav=wavFile)
 
         else:
 
-            booter.start(targetNum=targetNum, numThreads=self.numThreads, bootLength=attackLength, wav='hello-world')
+            booter.start(targetNum=targetNum, numThreads=numThreads, bootLength=attackLength, wav='hello-world')
 
         resp.status = falcon.HTTP_200
         json_resonse = {'Status': 'Attack Launched.'}
