@@ -2,36 +2,48 @@ import asyncio
 import threading
 from panoramisk.call_manager import CallManager
 from libs.generaterandoms import GenerateRandoms
+from libs.InitConfig import InitConfig
 
 
 class PhoneBooter(object):
 
+    def __init__(self):
+
+        self.config = InitConfig()
+
     @asyncio.coroutine
     def originate(self, targetNum, wav):
 
-        callmanager = CallManager(host='127.0.0.1',
-                                  port=5038,
-                                  ssl=False,
+        callmanager = CallManager(host=self.config.host,
+                                  port=self.config.port,
+                                  ssl=self.config.ssl,
                                   encoding='utf8')
 
         yield from callmanager.connect()
 
         auth = yield from callmanager.send_action({'Action': 'login',
-                                                   'Username': 'test',
-                                                   'Secret': 'password'})
+                                                   'Username': self.config.username,
+                                                   'Secret': self.config.secret})
 
         # if successful, auth.response returns "Success"
         if auth.response != 'Success':
             print("Failed to login!")
             return
 
+        genrand = GenerateRandoms('en_us')
+
         while True:
-            random_number = GenerateRandoms('en_US').phone_number()
+
+            # Pick a random phone number.
+            random_number = genrand.phone_number()
+            # Pick a random outbound provider.
+            random_provider = genrand.provider()
+
             print("Calling with number: %s" % random_number)
 
             call = yield from callmanager.send_originate({
                 'Action': 'Originate',
-                'Channel': 'SIP/flowroute/{num}'.format(num=targetNum),
+                'Channel': 'SIP/{provider}/{num}'.format(num=targetNum, provider=random_provider),
                 'WaitTime': 20,
                 'CallerID': '{idnum}'.format(idnum=random_number),
                 'Application': 'Playback',
