@@ -4,6 +4,7 @@ import random
 import os
 import yaml
 import json
+import argparse
 
 
 class SMSMessenger():
@@ -36,12 +37,34 @@ class SMSMessenger():
 
 
 if __name__ == "__main__":
+    banner = """
 
-    x = 0
-    number = '17863125175'
+                                                                                                                      
+                                                                                                                      
+  /$$$$$$$ /$$$$$$/$$$$   /$$$$$$$        /$$$$$$$  /$$$$$$   /$$$$$$  /$$$$$$/$$$$  /$$$$$$/$$$$   /$$$$$$   /$$$$$$ 
+ /$$_____/| $$_  $$_  $$ /$$_____/       /$$_____/ /$$__  $$ |____  $$| $$_  $$_  $$| $$_  $$_  $$ /$$__  $$ /$$__  $$
+|  $$$$$$ | $$ \ $$ \ $$|  $$$$$$       |  $$$$$$ | $$  \ $$  /$$$$$$$| $$ \ $$ \ $$| $$ \ $$ \ $$| $$$$$$$$| $$  \__/
+ \____  $$| $$ | $$ | $$ \____  $$       \____  $$| $$  | $$ /$$__  $$| $$ | $$ | $$| $$ | $$ | $$| $$_____/| $$      
+ /$$$$$$$/| $$ | $$ | $$ /$$$$$$$/       /$$$$$$$/| $$$$$$$/|  $$$$$$$| $$ | $$ | $$| $$ | $$ | $$|  $$$$$$$| $$      
+|_______/ |__/ |__/ |__/|_______//$$$$$$|_______/ | $$____/  \_______/|__/ |__/ |__/|__/ |__/ |__/ \_______/|__/      
+                                |______/          | $$                                                                
+                                                  | $$                                                                
+                                                  |__/                                                                
+       NOTE: Rate limited to 1 per second.
+       ex. usage: sms.py -p <number> -l 30
+       """
+    print(banner)
+    parser = argparse.ArgumentParser(description='PhoneBooter CLI')
+    parser.add_argument('-p', '--phonenumber', action='store', dest='targetNum', required=True,
+                        help='Specify the target phone number to attack. Example: 18001234567')
+    parser.add_argument('-l', '--length', action='store', dest='bootLength', required=True,
+                        help='Length of time in seconds to send SMS messages to the phone.')
+    args = parser.parse_args()
     sms = SMSMessenger()
-    while x < 20:
+    time = int(args.bootLength)
+    i = 0
+    while i <= time:
 
-        sms.telnyx_sms(number, None)
-        time.sleep(1.2)
-        x += 1
+        sms.telnyx_sms(args.targetNum, '')
+        time.sleep(1)
+        i += 1

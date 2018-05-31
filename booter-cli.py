@@ -32,7 +32,8 @@ if __name__ == '__main__':
                         help='Specify the *.ulaw file to play. Store it under /usr/share/asterisk/sounds. '
                              'Do not include the extension', default='hello-world')
     parser.add_argument('-t', '--threads', action='store', dest='threads',
-                        help='Number of async processes to kick off. Default is 8.', default=8)
+                        help='Number of async processes to kick off. Default is 2. '
+                             '2 is sufficient for cellular devices in most cases.', default=2)
     args = parser.parse_args()
 
     if args.wav is not None:

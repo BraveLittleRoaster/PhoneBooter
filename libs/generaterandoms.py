@@ -4,15 +4,16 @@ from faker.providers.phone_number.en_US import PhoneNumberProvider
 from faker import Generator
 from libs.InitConfig import InitConfig
 
+
 logger = logging.getLogger('phonebooter.libs.generaterandoms')
 
-class GenerateRandoms:
+class GenerateRandoms(object):
 
-    def __init__(self, CountryCode):
+    def __init__(self):
 
         self.logger = logging.getLogger('phonebooter.generaterandoms.GenerateRandoms')
         self.logger.debug('Creating an instance of GenerateRandoms')
-        self.generator = Generator(CountryCode)
+        self.generator = Generator()
         self.generator.seed(random.randrange(1, 99999))
         self.config = InitConfig()
 

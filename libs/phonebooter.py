@@ -30,7 +30,7 @@ class PhoneBooter(object):
             print("Failed to login!")
             return
 
-        genrand = GenerateRandoms('en_us')
+        genrand = GenerateRandoms()
 
         while True:
 
@@ -38,6 +38,18 @@ class PhoneBooter(object):
             random_number = genrand.phone_number()
             # Pick a random outbound provider.
             random_provider = genrand.provider()
+
+            if random_provider == 'TELNYX':
+
+                if targetNum[0] == 1:
+                    # bill to domestic (telnyx)
+                    ext = '1234@'
+                else:
+                    # Bill to international (telnyx)
+                    ext = '1337@'
+
+                # Create the Tech Prefix for Telnyx
+                targetNum = ext + targetNum
 
             print("Calling with number: %s" % random_number)
 
